@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: znogueir <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/05/12 22:23:25 by znogueir          #+#    #+#             */
-/*   Updated: 2022/05/19 19:13:59 by znogueir         ###   ########.fr       */
+/*   Created: 2022/06/07 20:26:36 by znogueir          #+#    #+#             */
+/*   Updated: 2022/06/07 20:26:39 by znogueir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*read_line(int fd, char *line)
 {
@@ -36,15 +36,15 @@ char	*read_line(int fd, char *line)
 char	*get_next_line(int fd)
 {
 	char		*line;
-	static char	*save;
+	static char	*save[1024];
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 		return (NULL);
 	line = NULL;
-	if (save)
-		line = save;
+	if (save[fd])
+		line = save[fd];
 	line = read_line(fd, line);
-	save = cut_line(line, save);
+	save[fd] = cut_line(line, save[fd]);
 	return (line);
 }
 
@@ -52,13 +52,12 @@ char	*get_next_line(int fd)
 #include <stdio.h>
 #include <fcntl.h>
 
-int	main(int ac, char **av)
+int	main()
 {
-	(void)ac;
 	int	f;
 	char	*line;
 
-	f = open(av[1], O_RDONLY);
+	f = open("big_line_with_nl", O_RDONLY);
 	line = get_next_line(f);
 	while (line)
 	{
@@ -66,10 +65,6 @@ int	main(int ac, char **av)
 		free(line);
 		line = get_next_line(f);
 	}
-	line = get_next_line(f);
-	printf("%s", line);
-	free(line);
 	close(f);
 	return (0);
-}
-*/
+}*/
